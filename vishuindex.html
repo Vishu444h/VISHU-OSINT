@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VISHU OSINT TOOLS</title>
+
+<!-- PWA / App-like -->
+<link rel="manifest" href="#">
+<meta name="theme-color" content="#00ff7f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: #1e2a35;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  color: #00ff7f; /* Green premium */
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+  font-size: 16px;
+  outline: none;
+}
+
+button {
+  padding: 12px 25px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(to right, #00ff7f, #00cc44);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-right: 10px;
+}
+
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+pre {
+  background: #0d1a22;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: left;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.download-btn {
+  margin-top: 15px;
+  background: linear-gradient(to right, #ff6600, #ff3300);
+  color: #fff;
+}
+
+/* Logo base64 embedded */
+.logo-img {
+  width: 120px;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <img class="logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAClN5f0AAA..." alt="VISHU Logo">
+  <h1>VISHU OSINT TOOLS</h1>
+  <input type="text" id="number" placeholder="Enter 10-digit mobile number">
+  <br>
+  <button onclick="lookup()">Lookup</button>
+  <button id="downloadBtn" class="download-btn" style="display:none;" onclick="downloadData()">Download</button>
+  <pre id="result"></pre>
+</div>
+
+<script>
+let currentData = null;
+
+function lookup() {
+    const number = document.getElementById("number").value.trim();
+    if(!/^\d{10}$/.test(number)) {
+        alert("❌ Enter a valid 10-digit number");
+        return;
+    }
+
+    const apiUrl = `https://nv2.ek4nsh.in/api?key=3012&mobile=${number}`;
+
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(data => {
+        data["developer"] = "VISHU"; // Replace developer name
+        currentData = data;
+        document.getElementById("result").textContent = JSON.stringify(data, null, 4);
+        document.getElementById("downloadBtn").style.display = "inline-block";
+      })
+      .catch(err => {
+        document.getElementById("result").textContent = "❌ API Error";
+        console.error(err);
+      });
+}
+
+function downloadData() {
+    if(!currentData) return;
+    const blob = new Blob([JSON.stringify(currentData, null, 4)], {type: "text/plain"});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "details.txt";
+    link.click();
+}
+</script>
+
+</body>
+</html>
